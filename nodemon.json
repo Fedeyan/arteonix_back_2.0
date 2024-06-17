@@ -1,0 +1,6 @@
+{
+    "exec": "babel-node index.js",
+    "watch": ["src"],
+    "ext": "js,json"
+  }
+  
