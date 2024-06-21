@@ -4,11 +4,10 @@ import response from "../utils/httpResponse";
 export async function registerHandler(req, res, next) {
   try {
     // realizar el registro del usuario
-    const { type, message } = await registerController(req.body);
-    console.log(type, message);
+    const { type, message, data } = await registerController(req.body);
 
     //enviar la respuesta
-    return response(type, res, message, null);
+    return response(type, res, message, data);
   } catch (error) {
     //mensaje de error x consola
     console.error(
