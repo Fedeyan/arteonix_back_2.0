@@ -9,6 +9,10 @@ class HTTPResponse {
     return new HTTPResponse(message, data, 200);
   }
 
+  static created(message, data) {
+    return new HTTPResponse(message, data, 201);
+  }
+
   static notFound(message, data) {
     return new HTTPResponse(message, data, 404);
   }

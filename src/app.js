@@ -16,6 +16,8 @@ app.use(morgan("dev"));
 app.use(
   cors({
     origin: origin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
 

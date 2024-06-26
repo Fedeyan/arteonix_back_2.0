@@ -1,10 +1,14 @@
 import response from "../utils/httpResponse";
-import validateSchema, { registerSchema } from "../utils/zValidations";
+import validateSchema, { loginSchema, registerSchema } from "../utils/zValidations";
 
 function validateFields(req, res, next) {
   let errors;
   if (req.path === "/register") {
     errors = validateSchema(registerSchema, req.body);
+  }
+
+  if (req.path === "/login") {
+    errors = validateSchema(loginSchema, req.body);
   }
 
   if (errors) {

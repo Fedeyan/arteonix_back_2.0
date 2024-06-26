@@ -48,7 +48,10 @@ async function registerUser(userData) {
     //comprobar si el usuario o el mail fueron usados en otra cuenta.
     const existingUser = await User.findOne({
       where: {
-        [Op.or]: [{ username: userData.username }, { email: userData.email }],
+        [Op.or]: [
+          { username: { [Op.iLike]: userData.username } },
+          { email: { [Op.iLike]: userData.email } }
+        ],
       },
       transaction,
     });
@@ -76,7 +79,7 @@ async function registerUser(userData) {
       const token = createToken({ id: user.id, username: user.username }, "7d")
 
       //definir respuesta satisfactoria
-      result.type = "success";
+      result.type = "created";
       result.message = "Registro exitoso";
       result.data = { token }
 
