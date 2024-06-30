@@ -1,4 +1,6 @@
+import { JsonWebTokenError } from "jsonwebtoken";
 import loginController from "../controllers/authentication/loginController";
+import logoutController from "../controllers/authentication/logoutController";
 import registerController from "../controllers/authentication/registerController";
 import response from "../utils/httpResponse";
 
@@ -26,6 +28,9 @@ export async function registerHandler(req, res, next) {
   }
 }
 
+
+//login
+
 export async function loginHandler(req, res, next) {
   try {
     //obtener resultado de logeo
@@ -47,6 +52,25 @@ export async function loginHandler(req, res, next) {
       "error",
       res,
       "Se produjo un error al iniciar sesión"
+    );
+  }
+}
+
+export default async function logoutHandler(req, res) {
+  try {
+    const token = req?.headers?.authorization?.split(" ")[1]
+
+    const { type, message, data } = await logoutController(token)
+
+    return response(type, res, message, data)
+
+  } catch (error) {
+    console.error(error);
+
+    return response(
+      "error",
+      res,
+      "Se produjo un error al cerrar sesión"
     );
   }
 }

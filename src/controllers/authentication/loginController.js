@@ -49,20 +49,23 @@ async function loginUser(userData) {
 
         // si el usuario no existe
         if (!user) {
-            result.message = "El usuario no existe"
             result.type = "notFound"
+            result.data = [{ message: "Usuario incorrecto", path: ["username"] }]
+
             return result
         }
 
         // comprobar contraseñas
         const match = await bcryptCompareAsync(userData.password, user.password)
 
-        if (!match) {
-            result.data = createToken({ id: user.id, username: user.username }, "7d")
+        if (match) {
+            result.data = {
+                token: createToken({ id: user.id, username: user.username }, "7d")
+            }
             result.type = "success"
         } else {
-            result.message = "Contraseña incorrecta"
             result.type = "notAuthorized"
+            result.data = [{ message: "Contraseña incorrecta", path: ["password"] }]
         }
 
         // devolver respuesta

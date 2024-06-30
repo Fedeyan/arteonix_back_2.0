@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
+import util from 'util'
 
 //configurar dotenv
 config();
@@ -19,5 +20,31 @@ export function createToken(payload, exp) {
     //manejo de error
     console.error("Se produjo un error al generar el token");
     console.error(error);
+  }
+}
+
+
+export async function boolVerifyToken(token) {
+  try {
+
+    //promisify jwt.verify
+    const promisifiedVerify = util.promisify(jwt.verify)
+
+    //verificar token
+    console.log("verificando token")
+    await promisifiedVerify(token, JWT_SECRET)
+
+    //resupuesta positiva
+    console.log("token verificado con exito")
+    return { isValidToken: true, message: "" }
+
+  } catch (error) {
+
+    //mostrar error
+    if (error.message === "invalid signature") {
+      console.log("se recibió un token con firma inválida")
+    }
+    //respuesta negativa
+    return { isValidToken: false, message: "" }
   }
 }
