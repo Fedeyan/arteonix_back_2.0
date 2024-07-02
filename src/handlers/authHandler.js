@@ -3,6 +3,16 @@ import loginController from "../controllers/authentication/loginController";
 import logoutController from "../controllers/authentication/logoutController";
 import registerController from "../controllers/authentication/registerController";
 import response from "../utils/httpResponse";
+import { config } from "dotenv";
+import googleLoginController from "../controllers/authentication/googleLoginController";
+
+config()
+
+const {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI
+} = process.env
 
 export async function registerHandler(req, res, next) {
   try {
@@ -56,7 +66,7 @@ export async function loginHandler(req, res, next) {
   }
 }
 
-export default async function logoutHandler(req, res) {
+export async function logoutHandler(req, res) {
   try {
     const token = req?.headers?.authorization?.split(" ")[1]
 
@@ -72,5 +82,34 @@ export default async function logoutHandler(req, res) {
       res,
       "Se produjo un error al cerrar sesión"
     );
+  }
+}
+
+export async function googleLoginHandler(req, res, next) {
+  try {
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(GOOGLE_REDIRECT_URI)}&response_type=code&scope=profile%20email&access_type=offline`;
+    res.redirect(authUrl)
+  } catch (error) {
+    console.error(error)
+    res.json("Error")
+  }
+}
+
+export async function googleLoginResultHandler(req, res, next) {
+  const code = req.query.code;
+  try {
+    const tokenParams = {
+      code,
+      client_id: GOOGLE_CLIENT_ID,
+      client_secret: GOOGLE_CLIENT_SECRET,
+      redirect_uri: GOOGLE_REDIRECT_URI,
+      grant_type: 'authorization_code'
+    }
+
+    const { type, message, data } = await googleLoginController(tokenParams)
+
+    return response(type, res, message, data)
+  } catch (error) {
+    console.log(error)
   }
 }
